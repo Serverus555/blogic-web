@@ -1,0 +1,39 @@
+{
+  "category": {
+    "root": "company guide",
+    "structure": "structure",
+    "employees": "all employees",
+    "subStructure": {
+      "companies": "companies",
+      "departments": "departments"
+    },
+
+    "assignments": "assignments",
+    "subAssignments": {
+      "all": "all assignments",
+      "my": "my assignments",
+      "toMe": "assignments to me"
+    }
+  },
+  "column": {
+    "company": {
+      "name": "name",
+      "physical_address": "physical address",
+      "legal_address": "legal address",
+      "director": "director"
+    },
+    "assignment": {
+
+    }
+  },
+  "button": {
+    "addEntity": "add entity",
+    "deleteEntity": "delete entity",
+    "editEntity": "edit entity",
+    "search": "search"
+  },
+  "input":
+  {
+    "user": "your name"
+  }
+}

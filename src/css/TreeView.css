@@ -1,0 +1,18 @@
+.TreeView {
+    flex: 1;
+}
+
+.TreeItemList {
+    list-style-type: none;
+    padding-left: 0.5em;
+}
+
+.TreeItemButton {
+    background: none;
+    border: none;
+}
+
+.TreeItemButton:hover {
+    background: rgba(0, 0, 255, .05);
+    border-radius: 20%;
+}
