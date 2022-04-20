@@ -1,12 +1,14 @@
+import {ConstraintList, notEmpty, onlyNumber} from "./Validate";
 
 class Column {
 
     name;
     type;
-
-    constructor(name, type="text") {
+    constraint;
+    constructor(name, type, constraint) {
         this.name = name;
         this.type = type;
+        this.constraint = constraint;
     }
 
     toString(entity) {
@@ -18,16 +20,16 @@ export abstract class NestedEntityColumn extends Column {
 
     columns;
 
-    constructor(name, columns) {
-        super(name, "nested");
+    protected constructor(name, columns, constraint) {
+        super(name, "nested", constraint);
         this.columns = columns;
     }
 }
 
 class NestedEmployeeColumn extends NestedEntityColumn {
 
-    constructor(name) {
-        super(name, columns.get("employee"));
+    constructor(name, constraint) {
+        super(name, columns.get("employee"), constraint);
     }
 
     // not static
@@ -42,8 +44,8 @@ class NestedEmployeeColumn extends NestedEntityColumn {
 export class ListColumn extends Column {
     itemsColumn;
 
-    constructor(name, itemsColumn) {
-        super(name, "list");
+    constructor(name, itemsColumn, constraint) {
+        super(name, "list", constraint);
         this.itemsColumn = itemsColumn;
     }
 
@@ -53,7 +55,7 @@ export class ListColumn extends Column {
         for (let e of entities) {
             strings.push(this.itemsColumn.toString(e));
         }
-        return strings.join("\n");
+        return strings.join("; ");
     }
 }
 
@@ -61,60 +63,59 @@ export class SelectColumn extends Column {
     options;
     defaultValue;
 
-    constructor(name, options, defaultValue="") {
-        super(name, "option");
+    constructor(name, options, defaultValue, constraint) {
+        super(name, "option", constraint);
         this.options = options;
         this.defaultValue = defaultValue;
     }
 }
 
-
-
 const columns = new Map();
 
 columns.set("employee",
     [
-        new Column("id", "number"),
-        new Column("lastName"),
-        new Column("firstName"),
-        new Column("patronymic"),
-        new Column("post")
+        new Column("id", "number", onlyNumber),
+        new Column("lastName", "text", notEmpty),
+        new Column("firstName", "text", notEmpty),
+        new Column("patronymic", "text", notEmpty),
+        new Column("post", "text", notEmpty)
     ]);
 columns.set("company",
     [
-        new Column("id", "number"),
-        new Column("name"),
-        new Column("physicalAddress"),
-        new Column("legalAddress"),
-        new NestedEmployeeColumn("director",)
+        new Column("id", "number", onlyNumber),
+        new Column("name", "text", notEmpty),
+        new Column("physicalAddress", "text", notEmpty),
+        new Column("legalAddress", "text", notEmpty),
+        new NestedEmployeeColumn("director", onlyNumber)
     ]);
 columns.set("department",
     [
-        new Column("id"),
-        new Column("name"),
-        new Column("contacts"),
-        new NestedEmployeeColumn("director")
+        new Column("id", "number", onlyNumber),
+        new Column("name", "text", notEmpty),
+        new Column("contacts", "text", notEmpty),
+        new NestedEmployeeColumn("director", onlyNumber)
     ]);
 columns.set("assignment",
     [
-        new Column("id"),
-        new Column("subject"),
-        new NestedEmployeeColumn("author"),
-        new ListColumn("executors", new NestedEmployeeColumn("executor")),
-        new Column("deadline", "date"),
+        new Column("id", "number", onlyNumber),
+        new Column("subject", "text", notEmpty),
+        new NestedEmployeeColumn("author", onlyNumber),
+        new ListColumn("executors", new NestedEmployeeColumn("executor", onlyNumber), notEmpty),
+        new Column("deadline", "date", notEmpty),
         new SelectColumn("controlStatus", [
-            "wait",
-            "handling",
-            "accepted",
-            "rejected"
-        ], "WAIT"),
+            "WAIT",
+            "HANDLING",
+            "ACCEPTED",
+            "REJECTED"
+        ], "WAIT", notEmpty),
         new SelectColumn("executeStatus", [
-            "prepare",
-            "execute",
-            "control",
-            "accepted"
-        ], "PREPARE"),
-        new Column("description", "textarea")
+            "PREPARE",
+            "EXECUTE",
+            "CONTROL",
+            "REWORK",
+            "ACCEPTED"
+        ], "PREPARE", notEmpty),
+        new Column("description", "textarea", notEmpty)
     ])
 
 columns.set("myAssignments", columns.get("assignment"))

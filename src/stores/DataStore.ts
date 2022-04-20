@@ -3,6 +3,7 @@ import {SortRule, FilterRule} from "../utils/Search"
 import {action, computed, get, makeObservable, observable, remove, set} from "mobx";
 import {loadMore as apiLoadMore, deleteEntity as apiDeleteEntity, saveEntity as apiSaveEntity} from "../api/Api";
 import {browserStore, windowStore} from "./BrowserStore";
+import {t} from "i18next";
 
 abstract class DataStore {
 
@@ -117,12 +118,21 @@ export class TableStore extends DataStore {
 
     @action
     private loadMoreCallback(data) {
-        if (data.length === 0) {
-            this.isDataAvailable = false;
+        if (this.category == "assignment") {
+            for (let entity of data) {
+                let deadline = entity["deadline"];
+                let [date, time] = deadline.substring(0, deadline.indexOf(".")).split("T");
+                date = date.split("-");
+                time = time.split(":");
+                entity["deadline"] = new Date(date[0], date[1], date[2], time[0], time[1], time[2]);
+            }
         }
-        else {
-            this.table.push(...data);
-        }
+            if (data.length === 0) {
+                this.isDataAvailable = false;
+            }
+            else {
+                this.table.push(...data);
+            }
         this.loading = false;
     }
 
@@ -179,6 +189,12 @@ export class EditEntityStore extends DataStore {
 
     @action
     save() {
+        for (let col of this.columns) {
+            if (col.name != "id" && !col.constraint.validate(this.editedEntity[col.name])) {
+                alert(`${t("error.validate")}: ${t(`column.${this.category}.${col.name}`)}`)
+                return;
+            }
+        }
         apiSaveEntity(
             this.category,
             this.editedEntity,

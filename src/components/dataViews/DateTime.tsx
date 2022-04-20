@@ -1,5 +1,6 @@
 import React from "react";
 import {t} from "i18next";
+import "../../css/DateTime.css";
 
 function dateToDateString(date) {
     let day = date.getDay() + 1;
@@ -96,12 +97,14 @@ export class DateTimeView extends React.Component {
                 <input
                     type={"date"}
                     disabled
+                    required
                     className={"DateView"}
                     value={dateToDateString(this.date)}
                 />
                 <input
                     type={"time"}
                     disabled
+                    required
                     className={"TimeView"}
                     value={dateToTimeString(this.date)}
                 />

@@ -64,6 +64,7 @@ export class AssignmentStatusInput extends React.Component {
                 </select>
                 {t("column.assignment.controlStatus")}
                 <select
+                    value={this.getControlStatus()}
                     ref={el => this.controlSelectRef = el}
                     onChange={e => this.setControlStatus(e.target.value)}
                 >

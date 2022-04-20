@@ -1,0 +1,6 @@
+
+.DateView:disabled, .TimeView:disabled {
+    background: rgba(0, 0, 0, 0);
+    color: inherit;
+    border: none;
+}

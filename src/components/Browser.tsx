@@ -5,7 +5,7 @@ import {observer} from "mobx-react";
 import {ListColumn, NestedEntityColumn, SelectColumn} from "../utils/ColumnProps";
 import {EditEntityStore, TableStore} from "../stores/DataStore";
 import {t} from "i18next";
-import {DateTimeInput} from "./dataViews/DateTime";
+import {DateTimeInput, DateTimeView} from "./dataViews/DateTime";
 import {AssignmentStatusInput} from "./dataViews/AssignmentStatus";
 
 @observer
@@ -79,7 +79,8 @@ class DataWindow extends React.Component {
                 if (col instanceof NestedEntityColumn || col instanceof ListColumn) {
                     cell = col.toString(entity[col.name]);
                 }
-                else if (col instanceof ListColumn) {
+                else if (col.type == "date") {
+                    cell = <DateTimeView {...{date: entity[col.name]}}/>
                 }
                 else {
                     cell = entity[col.name];
@@ -277,7 +278,7 @@ class EditWindow extends React.Component {
                     type={type}
                     onChange={e => this.data.setNestedColumn([column.name, i], e.target.value)}
                     key={i}
-                    defaultValue={v}
+                    defaultValue={v.id !== undefined ? v.id : v}
                 />
             );
         });
