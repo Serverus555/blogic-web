@@ -44,8 +44,6 @@ export class TableStore extends DataStore {
     @action
     loadMore(count=30) {
         if (this.isDataAvailable && !this.loading) {
-            console.log("l")
-            console.log(this.table.length)
             this.loading = true;
             apiLoadMore(
                 this.category,
@@ -53,17 +51,18 @@ export class TableStore extends DataStore {
                 Array.from(this.filters.values()),
                 this.table.length,
                 count,
-                this.loadMoreCallback.bind(this));
+                (data) => this.loadMoreCallback(data),
+                (e) => this.loadMoreOnError(e));
         }
     }
 
     @action
-    toggleSort(column) {
-        if (column === this.sort.column) {
+    toggleSort(columnName) {
+        if (columnName === this.sort.column) {
             this.sort.isAscend = !this.sort.isAscend;
         }
         else {
-            this.sort.column = column;
+            this.sort.column = columnName;
             this.sort.isAscend = true;
         }
     }
@@ -126,6 +125,11 @@ export class TableStore extends DataStore {
         }
         this.loading = false;
     }
+
+    @action
+    private loadMoreOnError(e) {
+        this.loading = false;
+    }
 }
 
 
@@ -146,12 +150,21 @@ export class EditEntityStore extends DataStore {
             this.origEntity = entity;
         }
         this.editedEntity = DataStore.deepCopyEntity(this.origEntity);
-        EditEntityStore.replaceNestedToIds(getCategoryColumns(this.category), this.editedEntity);
+        EditEntityStore.convertFields(getCategoryColumns(this.category), this.editedEntity);
     }
 
     @action
     setColumn(name, value) {
         this.editedEntity[name] = value;
+    }
+
+    @action
+    setNestedColumn(path, value) {
+        let entity = this.editedEntity;
+        for (let i = 0; i < path.length-1; i++) {
+            entity = entity[path[i]]
+        }
+        entity[path[path.length-1]] = value;
     }
 
     @action
@@ -204,6 +217,9 @@ export class EditEntityStore extends DataStore {
             else if (column instanceof SelectColumn) {
                 entity[column.name] = column.defaultValue;
             }
+            else if (column.type == "date") {
+                entity[column.name] = new Date();
+            }
             else {
                 entity[column.name] = null;
             }
@@ -211,15 +227,18 @@ export class EditEntityStore extends DataStore {
         return entity;
     }
 
-    private static replaceNestedToIds(columns, entity) {
+    private static convertFields(columns, entity) {
         for (let column of columns) {
             if (column instanceof NestedEntityColumn) {
                 entity[column.name] = entity[column.name]?.["id"];
             }
-            if (column instanceof ListColumn) {
+            else if (column instanceof ListColumn) {
                 for (let item of entity[column.name]) {
-                    this.replaceNestedToIds([column.itemsColumn], item);
+                    this.convertFields([column.itemsColumn], item);
                 }
+            }
+            else if (column.type == "date") {
+                entity[column.name] = new Date(entity[column.name])
             }
         }
     }

@@ -33,7 +33,7 @@ function getDeleteUrl(category) {
     return apiUri + categoryToPath.get(category);
 }
 
-export function loadMore(category, sort, filters, from, count, callback) {
+export function loadMore(category, sort, filters, from, count, callback, onError) {
     let rerouteFunc = loadReroutes.get(category);
     if (rerouteFunc !== undefined) {
         rerouteFunc(sort, filters, from, count, callback);
@@ -44,7 +44,7 @@ export function loadMore(category, sort, filters, from, count, callback) {
         getLoadUrl(category),
         {sort, filters, from, count},
         config)
-        .then(v => callback(v.data));
+        .then(v => {callback(v.data)}, e => onError(e));
 }
 export function deleteEntity(category, id, callback) {
     let config = getConfig();
@@ -57,15 +57,15 @@ export function saveEntity(category, entity, callback, errorCallback) {
     axios.put(getSaveUrl(category), entity, config).then(r => {callback(r.data)}, errorCallback);
 }
 
-function myAssignmentsLoadMore(sort, filters, alreadyLoaded, count, callback) {
+function myAssignmentsLoadMore(sort, filters, alreadyLoaded, count, callback, e) {
 
     filters.set("author", "some");
-    loadMore("assignment", sort, filters, alreadyLoaded, count, callback);
+    loadMore("assignment", sort, filters, alreadyLoaded, count, callback, e);
 }
-function assignmentsToMeLoadMore(sort, filters, alreadyLoaded, count, callback) {
+function assignmentsToMeLoadMore(sort, filters, alreadyLoaded, count, callback, e) {
 
     filters.set("executors", "some");
-    loadMore("assignment", sort, filters, alreadyLoaded, count, callback);
+    loadMore("assignment", sort, filters, alreadyLoaded, count, callback, e);
 }
 
 loadReroutes.set("my assignments", myAssignmentsLoadMore);

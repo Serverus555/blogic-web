@@ -45,15 +45,19 @@ class DataWindow extends React.Component {
         this.data.loadMore();
         this.data.columns.forEach(col => {
             this.tableHeader.push(
-                <th
-                    key={DataWindow.idCounter++}
-                    onClick={() => this.data.toggleSort(col.name)}>
-                    <div>
-                        <input defaultValue={this.data.filters.get(col.name)?.value} onChange={e => this.data.setFilter(col.name, e.target.value)}/>
-                        <br/>
-                        {t(`column.${this.data.category}.${col.name}`)}
-                    </div>
-                </th>);
+                    <th key={DataWindow.idCounter++}>
+                        <div>
+                            <input defaultValue={this.data.filters.get(col.name)?.value} onChange={e => this.data.setFilter(col.name, e.target.value)}/>
+                            <br/>
+                            <button className={"TableHeaderButton"} onClick={_ => {
+                                this.data.toggleSort(col.name);
+                                this.data.reload();
+                            }}>
+                                {t(`column.${this.data.category}.${col.name}`)}
+                            </button>
+                        </div>
+                    </th>
+                );
         });
     }
 
@@ -193,8 +197,6 @@ class EditWindow extends React.Component {
                     setControlStatus: (v) => this.data.setColumn("controlStatus", v)
                 }}/>);
                 skipColumnNames.push(column.name === "executeStatus" ? "controlStatus" : "executeStatus");
-                console.log(column.name);
-                console.log(skipColumnNames);
             }
             // normal columns
             else if (column.name !== "id") {
@@ -221,11 +223,15 @@ class EditWindow extends React.Component {
                         );
                         break;
                     }
-                    case "datetime": {
+                    case "date": {
                         this.fields.push(
                             <DateTimeInput
                                 key={this.idCounter++}
-                                {...{date: this.data.editedEntity[column.name]}}/>
+                                {...{
+                                    date: this.data.editedEntity[column.name],
+                                    fullColumnName: `column.${this.data.category}.${column.name}`
+                                }}
+                            />
                         );
                         break;
                     }
@@ -261,17 +267,23 @@ class EditWindow extends React.Component {
 
     private createListForm(column) {
         let items = this.data.editedEntity[column.name];
+        let type = column.itemsColumn.type;
+        if (type == "nested") {
+            type = "number";
+        }
         let inputs = [] = items.map((v, i) => {
             return (
                 <input
-                    onChange={e => items[i] = e.target.value}
+                    type={type}
+                    onChange={e => this.data.setNestedColumn([column.name, i], e.target.value)}
                     key={i}
-                    defaultValue={column.itemsColumn.toString(v)}
+                    defaultValue={v}
                 />
             );
         });
         return (
-            <div key={this.idCounter++}>
+            <div key={column.name}>
+                {t(`column.${this.data.category}.${column.name}`)}
                 <div>
                     {inputs}
                 </div>

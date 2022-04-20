@@ -55,12 +55,14 @@ export class AssignmentStatusInput extends React.Component {
         let controlOptions = this.getControlOptions();
         return (
             <div>
+                {t("column.assignment.executeStatus")}
                 <select
                     value={this.getExecuteStatus()}
                     onChange={e => this.setExecuteStatus(e.target.value)}
                 >
                     {executeOptions}
                 </select>
+                {t("column.assignment.controlStatus")}
                 <select
                     ref={el => this.controlSelectRef = el}
                     onChange={e => this.setControlStatus(e.target.value)}

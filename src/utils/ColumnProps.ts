@@ -101,7 +101,7 @@ columns.set("assignment",
         new Column("subject"),
         new NestedEmployeeColumn("author"),
         new ListColumn("executors", new NestedEmployeeColumn("executor")),
-        new Column("deadline", "datetime"),
+        new Column("deadline", "date"),
         new SelectColumn("controlStatus", [
             "wait",
             "handling",
