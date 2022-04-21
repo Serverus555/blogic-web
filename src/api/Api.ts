@@ -54,7 +54,7 @@ export function saveEntity(category, entity, callback, errorCallback) {
 
     console.log(entity)
     let config = getConfig();
-    axios.put(getSaveUrl(category), entity, config).then(r => {callback(r.data)}, errorCallback);
+    axios.put(getSaveUrl(category), entity, config).then(r => {callback(r.data)}).catch((err) => {errorCallback(err.response.data)});
 }
 
 function myAssignmentsLoadMore(sort, filters, alreadyLoaded, count, callback, e) {

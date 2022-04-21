@@ -147,6 +147,8 @@ export class EditEntityStore extends DataStore {
 
     entityId;
     origEntity;
+    isNewEntity = false;
+
     @observable
     editedEntity;
 
@@ -154,6 +156,7 @@ export class EditEntityStore extends DataStore {
         super(category);
         makeObservable(this);
         if (entity === undefined) {
+            this.isNewEntity = true;
             this.origEntity = EditEntityStore.createEmptyEntity(getCategoryColumns(this.category));
         }
         else {
@@ -191,7 +194,11 @@ export class EditEntityStore extends DataStore {
     save() {
         for (let col of this.columns) {
             if (col.name != "id" && !col.constraint.validate(this.editedEntity[col.name])) {
-                alert(`${t("error.validate")}: ${t(`column.${this.category}.${col.name}`)}`)
+                let colName = col.name;
+                if (col instanceof NestedEntityColumn) {
+                    colName += "_id";
+                }
+                alert(`${t("error.validate")}: ${t(`column.${this.category}.${colName}`)}`)
                 return;
             }
         }
@@ -205,7 +212,8 @@ export class EditEntityStore extends DataStore {
                 windowStore.getWindowData(windowStore.getDataWindowId(this.category))?.reload();
                 },
             (err) => {
-                alert(err);
+                let errParts = err.split(" ");
+                alert(`${t(`error.${errParts[0]}`)}: ${t(`column.${this.category}.${errParts[1]}`)}`);
             });
     }
 

@@ -1,0 +1,88 @@
+{
+  "category": {
+    "root": "Company guide",
+    "structure": "structure",
+    "employees": "all employees",
+    "subStructure": {
+      "companies": "companies",
+      "departments": "departments"
+    },
+
+    "assignments": "assignments",
+    "subAssignments": {
+      "all": "all assignments",
+      "my": "my assignments",
+      "toMe": "assignments to me"
+    }
+  },
+  "column": {
+    "company": {
+      "id": "id",
+      "name": "name",
+      "physicalAddress": "physical address",
+      "legalAddress": "legal address",
+      "director": "director",
+      "director_id": "director id"
+    },
+    "employee": {
+      "id": "id",
+      "firstName": "first name",
+      "lastName": "last name",
+      "patronymic": "patronymic",
+      "post": "post"
+    },
+    "department": {
+      "id": "id",
+      "name": "name",
+      "contacts": "contacts",
+      "director": "director",
+      "director_id": "director id"
+    },
+    "assignment": {
+      "id": "id",
+      "subject": "subject",
+      "author": "author",
+      "author_id": "author id",
+      "executors": "executors",
+      "executors_id": "executors id",
+      "deadline": "deadline",
+      "executeStatus": "execute status",
+      "controlStatus": "control status",
+      "description": "description",
+
+      "status": {
+        "executeStatus": {
+          "prepare": "prepare",
+          "execute": "execute",
+          "control": "control",
+          "rework": "rework",
+          "accepted": "accepted"
+        },
+        "controlStatus": {
+          "wait": "wait",
+          "handling": "handling",
+          "accepted": "accepted",
+          "rejected": "rejected"
+        }
+      }
+    }
+  },
+  "button": {
+    "close": "close",
+    "save": "save",
+    "addEntity": "add entity",
+    "deleteEntity": "delete entity",
+    "editEntity": "edit entity",
+    "search": "search",
+    "newListField": "add one",
+    "deleteListField": "delete one"
+  },
+  "input":
+  {
+    "user": "your name"
+  },
+  "error": {
+    "validate": "Wrong field value",
+    "notfound" : "Entered entity does not exist"
+  }
+}

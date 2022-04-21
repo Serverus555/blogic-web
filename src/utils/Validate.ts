@@ -1,10 +1,11 @@
+import {override} from "mobx";
 
 abstract class Constraint {
 
     abstract validate(obj);
 }
 
-export class ConstraintList extends Constraint{
+export class ConstraintChain extends Constraint{
 
     constraints;
     constructor(...constraints) {
@@ -20,7 +21,29 @@ export class ConstraintList extends Constraint{
         }
         return true;
     }
+}
 
+export class ListItemsConstraint extends Constraint {
+
+    itemsColumn;
+    notEmpty;
+    constructor(itemsColumn, notEmpty=true) {
+        super();
+        this.itemsColumn = itemsColumn;
+        this.notEmpty = notEmpty;
+    }
+
+    override validate(obj) {
+        if (!obj.length && notEmpty) {
+            return false;
+        }
+        for (let o of obj) {
+            if (!this.itemsColumn.constraint.validate(o)) {
+                return false;
+            }
+        }
+        return true;
+    }
 }
 
 class PassConstraint extends Constraint {

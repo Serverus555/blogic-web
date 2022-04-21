@@ -1,4 +1,4 @@
-import {ConstraintList, notEmpty, onlyNumber} from "./Validate";
+import {ListItemsConstraint, notEmpty, onlyNumber} from "./Validate";
 
 class Column {
 
@@ -44,8 +44,8 @@ class NestedEmployeeColumn extends NestedEntityColumn {
 export class ListColumn extends Column {
     itemsColumn;
 
-    constructor(name, itemsColumn, constraint) {
-        super(name, "list", constraint);
+    constructor(name, itemsColumn) {
+        super(name, "list", new ListItemsConstraint(itemsColumn));
         this.itemsColumn = itemsColumn;
     }
 
@@ -100,7 +100,7 @@ columns.set("assignment",
         new Column("id", "number", onlyNumber),
         new Column("subject", "text", notEmpty),
         new NestedEmployeeColumn("author", onlyNumber),
-        new ListColumn("executors", new NestedEmployeeColumn("executor", onlyNumber), notEmpty),
+        new ListColumn("executors", new NestedEmployeeColumn("executor", onlyNumber)),
         new Column("deadline", "date", notEmpty),
         new SelectColumn("controlStatus", [
             "WAIT",

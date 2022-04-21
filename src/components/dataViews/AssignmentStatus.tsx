@@ -77,7 +77,7 @@ export class AssignmentStatusInput extends React.Component {
     private getElement(statusName, value) {
         return (
             <option key={this.idCounter++} value={value}>
-                {t(`column.assignment.${statusName}`)}
+                {t(`column.assignment.status.${statusName}`)}
             </option>
         );
     };

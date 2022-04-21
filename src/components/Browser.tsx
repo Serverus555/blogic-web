@@ -204,7 +204,7 @@ class EditWindow extends React.Component {
                 let placeholder;
                 let type;
                 if (column instanceof NestedEntityColumn) {
-                    placeholder = t(`column.${this.data.category}.${column.name}.id`)
+                    placeholder = t(`column.${this.data.category}.${column.name}_id`)
                     type = column.columns.find(v => v.name == "id").type;
                 }
                 else {
@@ -278,13 +278,13 @@ class EditWindow extends React.Component {
                     type={type}
                     onChange={e => this.data.setNestedColumn([column.name, i], e.target.value)}
                     key={i}
-                    defaultValue={v.id !== undefined ? v.id : v}
+                    defaultValue={v?.id !== undefined ? v.id : v}
                 />
             );
         });
         return (
             <div key={column.name}>
-                {t(`column.${this.data.category}.${column.name}`)}
+                {t(`column.${this.data.category}.${column.name}_id`)}
                 <div>
                     {inputs}
                 </div>
@@ -315,9 +315,13 @@ class EditWindowActionPanel extends React.Component {
                 <button onClick={() => this.data.save()}>
                     {t("button.save")}
                 </button>
-                <button onClick={() => this.data.delete()}>
-                    {t("button.delete")}
-                </button>
+                {
+                    !this.data.isNewEntity ?
+                        <button onClick={() => this.data.delete()}>
+                            {t("button.delete")}
+                        </button>
+                        : undefined
+                }
                 <button onClick={() =>
                     browserStore.closeWindow(windowStore.getEditWindowId(this.data.category, this.data.origEntity?.id))}>
                     {t("button.close")}

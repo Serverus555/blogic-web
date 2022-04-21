@@ -1,0 +1,88 @@
+{
+  "category": {
+    "root": "Справочник организации",
+    "structure": "Структура",
+    "employees": "Все сотрудники",
+    "subStructure": {
+      "companies": "Компании",
+      "departments": "Отделы"
+    },
+
+    "assignments": "Поручения",
+    "subAssignments": {
+      "all": "Все поручения",
+      "my": "Мои поручения",
+      "toMe": "Поручения мне"
+    }
+  },
+  "column": {
+    "company": {
+      "id": "id",
+      "name": "Имя",
+      "physicalAddress": "Физический адрес",
+      "legalAddress": "Юридический адрес",
+      "director": "Руководитель",
+      "director_id": "id руководителя"
+    },
+    "employee": {
+      "id": "id",
+      "firstName": "Имя",
+      "lastName": "Фамилия",
+      "patronymic": "Отчество",
+      "post": "Должность"
+    },
+    "department": {
+      "id": "id",
+      "name": "Название",
+      "contacts": "Контакты",
+      "director": "Руководитель",
+      "director_id": "id руководителя"
+    },
+    "assignment": {
+      "id": "id",
+      "subject": "Тема",
+      "author": "Автор",
+      "author_id": "id автора",
+      "executors": "Исполнители",
+      "executors_id": "id исполнителей",
+      "deadline": "Срок исполнения",
+      "executeStatus": "Статут выполнения",
+      "controlStatus": "Статус контроля",
+      "description": "Описание",
+
+      "status": {
+        "executeStatus": {
+          "prepare": "Подготовка",
+          "execute": "Выполнение",
+          "control": "Проверка",
+          "rework": "Доработка",
+          "accepted": "Принято"
+        },
+        "controlStatus": {
+          "wait": "Ожидание",
+          "handling": "Обработка",
+          "accepted": "Принято",
+          "rejected": "Отклонено"
+        }
+      }
+    }
+  },
+  "button": {
+    "close": "Закрыть",
+    "save": "Сохранить",
+    "addEntity": "Добавить запись",
+    "deleteEntity": "Удалить запись",
+    "editEntity": "Редактировать запись",
+    "search": "Поиск",
+    "newListField": "Добавить",
+    "deleteListField": "Удалить"
+  },
+  "input":
+  {
+    "user": "Ваше имя"
+  },
+  "error": {
+    "validate": "Неверно заполнено поле",
+    "notfound" : "Указаная запись не существует"
+  }
+}
