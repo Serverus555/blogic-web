@@ -3,16 +3,21 @@ import {t} from "i18next";
 import "../../css/DateTime.css";
 
 function dateToDateString(date) {
-    let day = date.getDay() + 1;
+    let day = date.getDate();
     let month = date.getMonth() + 1;
     let year = date.getFullYear();
+    console.log(date)
+    console.log(month)
     if (day < 10) {
         day = `0${day}`
     }
     if (month < 10) {
         month = `0${month}`;
     }
-    return `${year}-${day}-${month}`;
+    console.log(day)
+    console.log(month)
+    console.log(year)
+    return `${year}-${month}-${day}`;
 }
 
 function dateToTimeString(date) {
@@ -45,39 +50,75 @@ function parseTimeString(str) {
     };
 }
 
-export class DateTimeInput extends React.Component {
+abstract class AbstractDateTimeComponent extends React.Component {
+    getDate;
+    deleteDate;
+    createDate;
 
-    date;
-    fullColumnName
-
-    constructor(props) {
+    protected constructor(props) {
         super(props);
-        this.date = props.date;
-        this.fullColumnName = props.fullColumnName;
+        this.getDate = props.getDate;
+        this.deleteDate = props.deleteDate
+        this.createDate = props.createDate;
     }
+}
+
+export class DateTimeInput extends AbstractDateTimeComponent {
 
     render() {
         return (
             <div>
-                {t(this.fullColumnName)}
-                <input
-                    type={"date"}
-                    onChange={e => {
-                        let d = e.target.valueAsDate;
-                        this.date.setFullYear(d.getFullYear(), d.getMonth(), d.getDay());
-                    }}
-                    defaultValue={dateToDateString(this.date)}
-                />
-                <input
-                    type={"time"}
-                    onChange={e => {
-                        let d = e.target.valueAsDate;
-                        this.date.setHours(d.getHours());
-                        this.date.setMinutes(d.getMinutes());
-                    }}
-                    defaultValue={dateToTimeString(this.date)}
-                />
+                <DateInput {...this.props}/>
+                <TimeInput {...this.props}/>
             </div>
+        );
+    }
+}
+
+export class DateInput extends AbstractDateTimeComponent {
+
+    constructor(props) {
+        super(props);
+    }
+
+    render() {
+        let date = this.getDate();
+        let defaultValue = date != undefined ? dateToDateString(date) : undefined;
+        return (
+            <input
+                type={"date"}
+                onChange={e => {
+                    let d = e.target.valueAsDate;
+                    d == undefined ? this.deleteDate()
+                        : (date ?? this.createDate()).setFullYear(d.getFullYear(), d.getMonth(), d.getDate())
+                }}
+                defaultValue={defaultValue}
+            />
+        );
+    }
+}
+
+export class TimeInput extends AbstractDateTimeComponent {
+
+    constructor(props) {
+        super(props);
+    }
+
+    render() {
+        let date = this.getDate();
+        let defaultValue = date != undefined ? dateToTimeString(date) : undefined;
+        return (
+            <input
+                type={"time"}
+                onChange={e => {
+                    let d = e.target.valueAsDate;
+                    d == undefined ? this.deleteDate()
+                        : (date ?? this.createDate());
+                    date?.setHours(d.getHours());
+                    date?.setMinutes(d.getMinutes());
+                }}
+                defaultValue={defaultValue}
+            />
         );
     }
 }
@@ -92,6 +133,8 @@ export class DateTimeView extends React.Component {
     }
 
     render() {
+        console.log("asd")
+        console.log(dateToDateString(this.date))
         return (
             <div>
                 <input

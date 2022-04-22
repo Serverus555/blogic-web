@@ -5,7 +5,7 @@ import {observer} from "mobx-react";
 import {ListColumn, NestedEntityColumn, SelectColumn} from "../utils/ColumnProps";
 import {EditEntityStore, TableStore} from "../stores/DataStore";
 import {t} from "i18next";
-import {DateTimeInput, DateTimeView} from "./dataViews/DateTime";
+import {DateInput, DateTimeInput, DateTimeView} from "./dataViews/DateTime";
 import {AssignmentStatusInput} from "./dataViews/AssignmentStatus";
 
 @observer
@@ -44,10 +44,20 @@ class DataWindow extends React.Component {
         this.data = props.dataStore;
         this.data.loadMore();
         this.data.columns.forEach(col => {
+            let searchField = <input defaultValue={this.data.filters.get(col.name)?.value} onChange={e => this.data.setFilter(col.name, e.target.value)}/>;
+            if (col.type == "date") {
+                searchField = <DateInput {...{
+                    getDate: () => this.data.filters.get(col.name)?.value,
+                    deleteDate: () => this.data.setFilter(col.name, undefined),
+                    createDate: () => {
+                        let date = new Date();
+                        this.data.setFilter(col.name, date);
+                        return date}}}/>
+            }
             this.tableHeader.push(
                     <th key={DataWindow.idCounter++}>
                         <div>
-                            <input defaultValue={this.data.filters.get(col.name)?.value} onChange={e => this.data.setFilter(col.name, e.target.value)}/>
+                            {searchField}
                             <br/>
                             <button className={"TableHeaderButton"} onClick={_ => {
                                 this.data.toggleSort(col.name);
@@ -81,6 +91,9 @@ class DataWindow extends React.Component {
                 }
                 else if (col.type == "date") {
                     cell = <DateTimeView {...{date: entity[col.name]}}/>
+                }
+                else if (this.data.category == "assignment" && col.name === "controlStatus" || col.name === "executeStatus") {
+                    cell = t(`column.assignment.status.${col.name}.${entity[col.name]}`)
                 }
                 else {
                     cell = entity[col.name];
@@ -226,13 +239,17 @@ class EditWindow extends React.Component {
                     }
                     case "date": {
                         this.fields.push(
-                            <DateTimeInput
-                                key={this.idCounter++}
-                                {...{
-                                    date: this.data.editedEntity[column.name],
-                                    fullColumnName: `column.${this.data.category}.${column.name}`
-                                }}
-                            />
+                            <div>
+                                {t(`column.${this.data.category}.${column.name}`)}
+                                <DateTimeInput
+                                    key={this.idCounter++}
+                                    {...{
+                                        getDate: () => {return this.data.editedEntity[column.name]},
+                                        deleteDate: () => {this.data.editedEntity[column.name] = null},
+                                        createDate: () => {return this.data.editedEntity[column.name] = new Date()}
+                                    }}
+                                />
+                            </div>
                         );
                         break;
                     }

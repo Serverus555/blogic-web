@@ -71,7 +71,7 @@ export class TableStore extends DataStore {
     @action
     setFilter(columnName, value) {
         let filter = get(this.filters, columnName);
-        if (value === "") {
+        if (value === "" || value == undefined) {
             remove(this.filters, columnName);
         }
         if (filter === undefined) {
@@ -95,7 +95,7 @@ export class TableStore extends DataStore {
 
     @action
     deleteEntity(id) {
-        apiDeleteEntity(this.category, id, () => this.reload());
+        apiDeleteEntity(this.category, id, () => this.reload(), (err) => {alert(t(`error.${err}`))});
     }
 
     @action
@@ -124,7 +124,12 @@ export class TableStore extends DataStore {
                 let [date, time] = deadline.substring(0, deadline.indexOf(".")).split("T");
                 date = date.split("-");
                 time = time.split(":");
-                entity["deadline"] = new Date(date[0], date[1], date[2], time[0], time[1], time[2]);
+                // entity["deadline"] = new Date(date[0], date[1]-1, date[2], time[0], time[1], time[2]);
+                let d = new Date();
+                d.setUTCFullYear(date[0], date[1]-1, date[2]);
+                d.setUTCHours(time[0]);
+                d.setUTCMinutes(time[1]);
+                entity["deadline"] = d;
             }
         }
             if (data.length === 0) {
@@ -133,7 +138,7 @@ export class TableStore extends DataStore {
             else {
                 this.table.push(...data);
             }
-        this.loading = false;
+            this.loading = false;
     }
 
     @action
@@ -206,10 +211,8 @@ export class EditEntityStore extends DataStore {
             this.category,
             this.editedEntity,
             () => {
-                console.log("qqq");
-                console.log(windowStore.getEditWindowId(this.category, this.origEntity.id));
-                browserStore.closeWindow(windowStore.getEditWindowId(this.category, this.origEntity.id));
                 windowStore.getWindowData(windowStore.getDataWindowId(this.category))?.reload();
+                browserStore.closeWindow(windowStore.getEditWindowId(this.category, this.origEntity.id));
                 },
             (err) => {
                 let errParts = err.split(" ");
@@ -223,7 +226,7 @@ export class EditEntityStore extends DataStore {
         {
             windowStore.closeWindow(windowStore.getEditWindowId(this.category, this.origEntity.id));
             windowStore.getWindowData(windowStore.getDataWindowId(this.category))?.reload();
-        });
+        }, (err) => {alert(t(`error.${err}`))});
     }
 
     private static createEmptyEntity(columns) {

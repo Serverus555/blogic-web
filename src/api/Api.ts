@@ -46,9 +46,9 @@ export function loadMore(category, sort, filters, from, count, callback, onError
         config)
         .then(v => {callback(v.data)}, e => onError(e));
 }
-export function deleteEntity(category, id, callback) {
+export function deleteEntity(category, id, callback, onError) {
     let config = getConfig();
-    axios.delete(getDeleteUrl(category)+`/${id}`, config).then(callback);
+    axios.delete(getDeleteUrl(category)+`/${id}`, config).then(callback).catch((err) => onError(err.response.data));
 }
 export function saveEntity(category, entity, callback, errorCallback) {
 

@@ -30,27 +30,27 @@ export class AssignmentStatusInput extends React.Component {
         let options = [];
         let executeStatus = this.getExecuteStatus();
         if (["PREPARE", "EXECUTE"].includes(executeStatus)) {
-            options.push(this.getElement("controlStatus.wait", "WAIT"));
+            options.push(this.getElement("controlStatus.WAIT", "WAIT"));
         }
         else if (executeStatus == "CONTROL") {
-            options.push(this.getElement("controlStatus.handling", "HANDLING"));
+            options.push(this.getElement("controlStatus.HANDLING", "HANDLING"));
         }
         if (["CONTROL", "ACCEPTED"].includes(executeStatus)) {
-            options.push(this.getElement("controlStatus.accepted", "ACCEPTED"));
+            options.push(this.getElement("controlStatus.ACCEPTED", "ACCEPTED"));
         }
         if (["EXECUTE", "CONTROL", "REWORK"].includes(executeStatus)) {
-            options.push(this.getElement("controlStatus.rejected", "REJECTED"));
+            options.push(this.getElement("controlStatus.REJECTED", "REJECTED"));
         }
         return options;
     }
 
     render() {
         let executeOptions = [
-            this.getElement("executeStatus.prepare", "PREPARE"),
-            this.getElement("executeStatus.execute", "EXECUTE"),
-            this.getElement("executeStatus.control", "CONTROL"),
-            this.getElement("executeStatus.rework", "REWORK"),
-            this.getElement("executeStatus.accepted", "ACCEPTED"),
+            this.getElement("executeStatus.PREPARE", "PREPARE"),
+            this.getElement("executeStatus.EXECUTE", "EXECUTE"),
+            this.getElement("executeStatus.CONTROL", "CONTROL"),
+            this.getElement("executeStatus.REWORK", "REWORK"),
+            this.getElement("executeStatus.ACCEPTED", "ACCEPTED"),
         ]
         let controlOptions = this.getControlOptions();
         return (
